@@ -25,20 +25,15 @@ function processKanban() {
   const targetSections: SectionNode[] = [];
   const allStickies: StickyNode[] = [];
 
-  for (const node of allNodes) {
+  for (const node of allNodes.filter(n => !n.removed)) {
     if (node.type === 'SECTION') {
-      if (node.removed) continue;
-
-      if (node.name.indexOf(TARGET_NAME_MARKER) === 0) {
+      if (node.name.trim().startsWith(TARGET_NAME_MARKER)) {
         targetSections.push(node as SectionNode);
       }
     } else if (node.type === 'STICKY') {
-      if (!node.removed) {
-        allStickies.push(node as StickyNode);
-      }
+      allStickies.push(node as StickyNode);
     }
   }
-
   if (targetSections.length === 0) return;
 
   for (const section of targetSections) {
@@ -53,27 +48,23 @@ function processKanban() {
 function arrangeSection(section: SectionNode, allStickies: StickyNode[]) {
   if (section.removed) return;
 
-  const sn = section as SceneNode;
-
-  const bX = sn.absoluteTransform[0][2];
-  const bY = sn.absoluteTransform[1][2];
-  const bW = sn.width;
-  const bH = sn.height;
-
+  const sectionNode = section as SceneNode;
+  const sectionX = sectionNode.absoluteTransform[0][2];
+  const sectionY = sectionNode.absoluteTransform[1][2];
+  const sectionWidth = sectionNode.width;
+  const sectionHeight = sectionNode.height;
   const targets: StickyNode[] = [];
 
-  for (const sticky of allStickies) {
-    if (sticky.removed) continue;
-
-    const sX = sticky.absoluteTransform[0][2];
-    const sY = sticky.absoluteTransform[1][2];
-    const sCenterX = sX + (sticky.width / 2);
-    const sCenterY = sY + (sticky.height / 2);
+  for (const sticky of allStickies.filter(n => !n.removed)) {
+    const stickyX = sticky.absoluteTransform[0][2];
+    const stickyY = sticky.absoluteTransform[1][2];
+    const stickyCenterX = stickyX + (sticky.width / 2);
+    const stickyCenterY = stickyY + (sticky.height / 2);
 
     const isChild = sticky.parent?.id === section.id;
     const isInZone = (
-      sCenterX >= bX && sCenterX <= bX + bW &&
-      sCenterY >= bY && sCenterY <= bY + bH
+      stickyCenterX >= sectionX && stickyCenterX <= sectionX + sectionWidth &&
+      stickyCenterY >= sectionY && stickyCenterY <= sectionY + sectionHeight
     );
     if (isChild || isInZone) {
       targets.push(sticky);
