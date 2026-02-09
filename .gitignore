@@ -1,3 +1,7 @@
+# Figma Plugin
+code.js
+*.bak
+
 # Logs
 logs
 *.log
