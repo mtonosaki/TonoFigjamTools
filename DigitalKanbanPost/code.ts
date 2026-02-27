@@ -98,8 +98,7 @@ function arrangeSection(section: SectionNode, allStickies: StickyNode[]) {
   if (hasMoved || Math.abs(section.height - contentHeight) > 5) {
     const newHeight = Math.max(contentHeight, minHeight);
     if (!isNaN(newHeight) && newHeight > 0) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (section as any).resize(section.width, newHeight);
+      section.resizeWithoutConstraints(section.width, newHeight);
     }
   }
 }

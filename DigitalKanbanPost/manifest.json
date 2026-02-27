@@ -9,7 +9,6 @@
   "editorType": [
     "figjam"
   ],
-  "ui": "ui.html",
   "networkAccess": {
     "allowedDomains": [
       "none"
